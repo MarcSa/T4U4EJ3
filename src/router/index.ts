@@ -1,57 +1,30 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from '@/modules/landing/pages/HomePage.vue';
-import { authGuard } from '@/modules/auth/guards/authGuard';
+import GuestPage from '@/modules/users/pages/Guest.vue';
+import { roleGuard } from '@/modules/auth/guards/roleGuard';
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
             path: '/',
-            component: () => import('@/modules/landing/layouts/LandingLayout.vue'),
+            component: () => import('@/modules/users/layouts/UsersLayout.vue'),
             children: [
                 {
                     path: '/',
                     name: 'home',
-                    component: HomePage,
+                    component: GuestPage,
                 },
                 {
-                    path: '/about',
-                    name: 'about',
-                    component: () => import('@/modules/landing/pages/AboutPage.vue'),
+                    path: '/admin/editor',
+                    name: 'editor',
+                    component: () => import('@/modules/users/pages/EditorPanel.vue'),
+                    beforeEnter: roleGuard(['Editor', 'Admin']),
                 },
                 {
-                    path: '/contact',
-                    name: 'contact',
-                    component: () => import('@/modules/landing/pages/ContactPage.vue'),
-                },
-                {
-                    path: '/tasks',
-                    name: 'tasks',
-                    component: () => import('@/modules/tasks/pages/TaskList.vue'),
-                    beforeEnter: [authGuard],
-                },
-                {
-                    path: '/tasks/:id',
-                    name: 'task-detail',
-                    component: () => import('@/modules/tasks/pages/TaskDetail.vue'),
-                    props: true,
-                },
-            ],
-        },
-        {
-            path: '/auth',
-            redirect: 'login',
-            component: () => import('@/modules/auth/layouts/AuthLayout.vue'),
-            children: [
-                {
-                    path: '/login',
-                    name: 'login',
-                    component: () => import('@/modules/auth/pages/LoginPage.vue'),
-                },
-                {
-                    path: '/register',
-                    name: 'register',
-                    component: () => import('@/modules/auth/pages/RegisterPage.vue'),
+                    path: '/admin/config',
+                    name: 'admin',
+                    component: () => import('@/modules/users/pages/AdminConfig.vue'),
+                    beforeEnter: roleGuard(['Admin']),
                 },
             ],
         },
